@@ -1,7 +1,7 @@
 #!/bin/sh
-#this is a shell script, its purpose is to autodetect the linux distribution that the user runs in in and run another set of scripts based on the needed job, the reason I made this script is to basically "automate" the instalation of a series of packages, enabling reposotories, and making a linux distribution gaming ready.
 
-#The user of course will be allowed to customize which scripts run, although what I would recomend is doing this on a freshly installed system and not doing anything prior to that and not preventing the important scripts running, like the preperation and the repo-enabler script.
+# Exit immediately if something fails
+set -e
 
 # 1) Check if running as root
 if [ "$(id -u)" -ne 0 ]; then
@@ -10,73 +10,61 @@ if [ "$(id -u)" -ne 0 ]; then
     exit 1
 fi
 
-# 3) Optional sudo keep-alive (only useful if script internally calls sudo)
-# If already root, this does nothing harmful
-if command -v sudo >/dev/null 2>&1; then
-    sudo -v 2>/dev/null
-
-    # Keep sudo alive in background
-    (
-        while true; do
-            sudo -v 2>/dev/null
-            sleep 60
-        done
-    ) &
-    SUDO_PID=$!
-fi
-
-#detect in which distro is it running
-
+# Detect distribution
 if [ -f /etc/os-release ]; then
     . /etc/os-release
-    DISTRO="$ID"
+    DISTRO=$(printf '%s' "$ID" | tr '[:upper:]' '[:lower:]')
 else
     echo "Cannot detect distribution."
     exit 1
 fi
 
-echo "[DEBUG]: Detected Distribution $DISTRO"
+echo "[INFO] -> Detected distribution: $DISTRO"
 
-#Run scripts based on detected distribution, the user can uncomment any of the scripts that they want to not run, although i would recomend not tampering with neither the first or the second script in the sequence of each distro.
-
-#I decided not to run the nvidia setup because it is risky and some distros have their own solutions for graphics driver downloads
-
-: <<'END_COMMENT'
 case "$DISTRO" in
     arch)
-        echo "Detected Arch Linux"
-        sh ./Arch-Linux/arch-enable-extra-repos.sh || exit 1
-        sh ./Arch-Linux/arch-preparation-setup.sh || exit 1
-        #sh ./Arch-Linux/arch-install-nvidia-drivers.sh || exit 1
-        sh ./Arch-Linux/arch-student-setup.sh || exit 1
-        sh ./Arch-Linux/arch-gaming-setup.sh || exit 1
+        echo "[INFO] -> auto-setup: enabling extra repos for Arch Linux"
+        echo "[INFO] -> auto-setup: prepearing for setup of Arch Linux"
+        echo "[INFO] -> auto-setup: installing "student" packages for Arch Linux"
+        echo "[INFO] -> auto-setup: installing gaming related packages for Arch Linux"
+        #sh ./Arch-Linux/arch-enable-extra-repos.sh
+        #sh ./Arch-Linux/arch-preparation-setup.sh
+        #sh ./Arch-Linux/arch-student-setup.sh
+        #sh ./Arch-Linux/arch-gaming-setup.sh
         ;;
 
     opensuse-tumbleweed|opensuse)
-        echo "Detected openSUSE Tumbleweed"
-        sh ./OpenSUSE-Tumbleweed/SUSE-Tumble-enable-extra-repos.sh || exit 1
-        sh ./OpenSUSE-Tumbleweed/SUSE-Tumble-preparation-setup.sh || exit 1
-        #sh ./OpenSUSE-Tumbleweed/SUSE-Tumble-install-nvidia-drivers.sh || exit 1
-        sh ./OpenSUSE-Tumbleweed/SUSE-Tumble-student-setup.sh || exit 1
-        sh ./OpenSUSE-Tumbleweed/SUSE-Tumble-gaming-setup.sh || exit 1
+        echo "[INFO] -> auto-setup: enabling extra repos for OpenSUSE Tumbleweed"
+        echo "[INFO] -> auto-setup: prepearing for setup of OpenSUSE Tumbleweed"
+        echo "[INFO] -> auto-setup: installing "student" packages for OpenSUSE Tumbleweed"
+        echo "[INFO] -> auto-setup: installing gaming related packages for OpenSUSE Tumbleweed"
+        #sh ./OpenSUSE-Tumbleweed/SUSE-Tumble-enable-extra-repos.sh
+        #sh ./OpenSUSE-Tumbleweed/SUSE-Tumble-preparation-setup.sh
+        #sh ./OpenSUSE-Tumbleweed/SUSE-Tumble-student-setup.sh
+        #sh ./OpenSUSE-Tumbleweed/SUSE-Tumble-gaming-setup.sh
         ;;
 
-    linuxmint)
-        echo "Detected Linux Mint"
-        sh ./Linux-Mint/mint-enable-extra-repos.sh || exit 1
-        sh ./Linux-Mint/mint-preparation-setup.sh || exit 1
-        #sh ./Linux-Mint/mint-install-nvidia-drivers.sh || exit 1
-        sh ./Linux-Mint/mint-student-setup.sh || exit 1
-        sh ./Linux-Mint/mint-gaming-setup.sh || exit 1
+    linuxmint|ubuntu) 
+        #remove ubuntu when you finish testing, ubuntu is only an option for testing purposes
+        echo "[INFO] -> auto-setup: enabling extra repos for Linux Mint"
+        echo "[INFO] -> auto-setup: prepearing for setup of Linux Mint"
+        echo "[INFO] -> auto-setup: installing "student" packages for Linux Mint"
+        echo "[INFO] -> auto-setup: installing gaming related packages for Linux Mint"
+        #sh ./Linux-Mint/mint-enable-extra-repos.sh
+        #sh ./Linux-Mint/mint-preparation-setup.sh
+        #sh ./Linux-Mint/mint-student-setup.sh
+        #sh ./Linux-Mint/mint-gaming-setup.sh
         ;;
 
     fedora)
-        echo "Detected Fedora"
-        sh ./Fedora-Linux/fedora-enable-extra-repos.sh || exit 1
-        sh ./Fedora-Linux/fedora-preparation-setup.sh || exit 1
-        #sh ./Fedora-Linux/fedora-install-nvidia-drivers.sh || exit 1
-        sh ./Fedora-Linux/fedora-student-setup.sh || exit 1
-        sh ./Fedora-Linux/fedora-gaming-setup.sh || exit 1
+        echo "[INFO] -> auto-setup: enabling extra repos for Fedora Linux"
+        echo "[INFO] -> auto-setup: prepearing for setup of Fedora Linux"
+        echo "[INFO] -> auto-setup: installing "student" packages for Fedora Linux"
+        echo "[INFO] -> auto-setup: installing gaming related packages for Fedora Linux"
+        #sh ./Fedora-Linux/fedora-enable-extra-repos.sh
+        #sh ./Fedora-Linux/fedora-preparation-setup.sh
+        #sh ./Fedora-Linux/fedora-student-setup.sh
+        #sh ./Fedora-Linux/fedora-gaming-setup.sh
         ;;
 
     *)
@@ -84,5 +72,3 @@ case "$DISTRO" in
         exit 1
         ;;
 esac
-
-END_COMMENT
