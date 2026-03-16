@@ -33,6 +33,30 @@ case "$DISTRO" in
         #sh ./Arch-Linux/arch-gaming-setup.sh
         ;;
 
+    endeavouros)
+        echo "[INFO] -> auto-setup: enabling extra repos for Endeavour OS"
+        echo " "
+        sh ./Endeavour-OS/endeavour-os-enable-extra-repos.sh #Not needed since it has everything ready out of the box but keeping it to check if the needed repos are enabled
+        echo " "
+        echo "[INFO] -> auto-setup: prepearing for setup of Endeavour OS"
+        echo " "
+        sh ./Endeavour-OS/endeavour-os-preparation-setup.sh
+        echo " "
+        echo "[INFO] -> auto-setup: installing "student" packages for Endeavour OS"
+        echo " "
+        sh ./Endeavour-OS/endeavour-os-student-setup.sh
+        echo " "
+        echo "[INFO] -> auto-setup: installing gaming related packages for Endeavour OS"
+        echo " "
+        sh ./Endeavour-OS/endeavour-os-gaming-setup.sh
+        echo " "
+        #Edeavour OS is Arch based but since it has multilib and aur already enabled I decided to use a separate set of scripts
+        
+        
+        
+        
+        ;;
+
     opensuse-tumbleweed|opensuse)
         echo "[INFO] -> auto-setup: enabling extra repos for OpenSUSE Tumbleweed"
         echo "[INFO] -> auto-setup: prepearing for setup of OpenSUSE Tumbleweed"
